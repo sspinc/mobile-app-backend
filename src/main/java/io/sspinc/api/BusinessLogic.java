@@ -115,21 +115,21 @@ public class BusinessLogic {
         // FIXME: Get this from DB
 
         validStateInputs.put(State.Init, new Input[] {Input.open_fp});
-        validStateInputs.put(State.Calculating_Prediction_A, new Input[] {});
-        validStateInputs.put(State.Calculating_Prediction_B, new Input[] {});
-        validStateInputs.put(State.Calculator_A, new Input[] {});
-        validStateInputs.put(State.Calculator_B, new Input[] {});
-        validStateInputs.put(State.Calculator_C, new Input[] {});
-        validStateInputs.put(State.Clearing_Fit_Profile, new Input[] {});
-        validStateInputs.put(State.Delete_Seed_Confirmation, new Input[] {});
-        validStateInputs.put(State.Fit_Prediction_A, new Input[] {});
-        validStateInputs.put(State.Fit_Prediction_B, new Input[] {});
-        validStateInputs.put(State.Fit_Profile_Cleared, new Input[] {});
+        validStateInputs.put(State.Calculating_Prediction_A, new Input[] {Input.ready});
+        validStateInputs.put(State.Calculating_Prediction_B, new Input[] {Input.ready});
+        validStateInputs.put(State.Calculator_A, new Input[] {Input.size_selected});
+        validStateInputs.put(State.Calculator_B, new Input[] {Input.size_selected, Input.back});
+        validStateInputs.put(State.Calculator_C, new Input[] {Input.size_selected});
+        validStateInputs.put(State.Clearing_Fit_Profile, new Input[] {Input.ready});
+        validStateInputs.put(State.Delete_Seed_Confirmation, new Input[] {Input.approved, Input.declined});
+        validStateInputs.put(State.Fit_Prediction_A, new Input[] {Input.next});
+        validStateInputs.put(State.Fit_Prediction_B, new Input[] {Input.done});
+        validStateInputs.put(State.Fit_Profile_Cleared, new Input[] {Input.done});
         validStateInputs.put(State.Fit_Profile, new Input[] {Input.add_seed, Input.remove_seed});
-        validStateInputs.put(State.How_does_it_work, new Input[] {});
-        validStateInputs.put(State.Manual_Seed_Saved, new Input[] {});
-        validStateInputs.put(State.Privacy_Policy, new Input[] {});
-        validStateInputs.put(State.What_is_my_Fit_Profile, new Input[] {});
+        validStateInputs.put(State.How_does_it_work, new Input[] {Input.what_is_my_fit_profile, Input.privacy_policy});
+        validStateInputs.put(State.Manual_Seed_Saved, new Input[] {Input.done});
+        validStateInputs.put(State.Privacy_Policy, new Input[] {Input.what_is_my_fit_profile, Input.how_it_works});
+        validStateInputs.put(State.What_is_my_Fit_Profile, new Input[] {Input.privacy_policy, Input.how_it_works});
     }
 
 
@@ -315,8 +315,10 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
-        
+        if (Input.ready == input) {
+            nextState = State.Fit_Prediction_A;
+        }
+
         setState(nextState);
         return getResponseForStateScreen(nextState);
     }
@@ -325,9 +327,11 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
-        
-        setState(nextState);
+        if (Input.ready == input) {
+            nextState = State.Fit_Prediction_B;
+        }
+
+        setState(State.Fit_Prediction_B);
         return getResponseForStateScreen(nextState);
     }
 
@@ -335,7 +339,9 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (Input.size_selected == input) {
+            nextState = State.Calculating_Prediction_A;
+        }
         
         setState(nextState);
         return getResponseForStateScreen(nextState);
@@ -345,7 +351,12 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (input == Input.back) {
+            nextState = State.Fit_Profile;
+        }
+        else if (input == Input.size_selected) {
+            nextState = State.Calculating_Prediction_A;
+        }     
         
         setState(nextState);
         return getResponseForStateScreen(nextState);

@@ -22,6 +22,7 @@ public class FSM {
     }
 
     enum Input {
+        approved,
         add_seed,
         back,
         brand_selected,
