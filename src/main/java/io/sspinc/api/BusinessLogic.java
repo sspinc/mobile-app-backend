@@ -43,7 +43,7 @@ public class BusinessLogic {
      * Set the current state
      */
     public void setState(FSM.State state) {
-        logger.info("SessionID:{} , CurrentState:{}, NextState:{}", sessionID, getState(), state);
+        logger.info("\nSessionID: {}, CurrentState: {}, NextState: {}", sessionID, getState(), state);
         sessionState.put(sessionID, state);
     }
 
@@ -51,7 +51,7 @@ public class BusinessLogic {
     /**
      * Get the current state
      */
-    public FSM.State getState() {
+    public State getState() {
         return sessionState.get(sessionID);
     }
     
@@ -60,21 +60,34 @@ public class BusinessLogic {
      * Constructor
      */
     public BusinessLogic() {
-        sessionID = createSessionID();
         initScreenValues();
         initStateScreens();
         initValidStateInput();
-        sessionState.put(sessionID, State.Init);
     }
 
-    
+
     /**
-     * Initializes a unique session ID
+     * Extracts the sessionID from the parameters
      */
-    private String createSessionID() {
+    private String getSessionID() {
         // FIXME: Use user's info etc.
 
-        return java.util.UUID.randomUUID().toString();
+        return sessionID;
+    }
+
+
+    /**
+     * Sets the session ID for the current execution
+     * @param sessionID
+     */
+    private void setOrCreateSessionID(String sessionID) {
+        if (null != sessionID) {
+            this.sessionID = sessionID;
+        }
+        else {
+            this.sessionID = java.util.UUID.randomUUID().toString();
+            sessionState.put(this.sessionID, State.Init);            
+        }
     }
 
 
@@ -85,14 +98,12 @@ public class BusinessLogic {
         // FIXME: Get this from DB
 
         for (int screenId=1; screenId < 15; screenId++) {
-            screenResponse.put(screenId, "{\n" +
+            screenResponse.put(screenId, 
                                 "    \"data\": {\n" +
                                 "        \"screenResponse\": {\n" +
                                 "            \"screenId\": \"screen_" + screenId + "\"\n" +
                                 "        }\n" +
-                                "    }\n" +
-                                "}" +
-                                "");
+                                "    }\n");
         }
     }
 
@@ -114,7 +125,7 @@ public class BusinessLogic {
         validStateInputs.put(State.Fit_Prediction_A, new Input[] {});
         validStateInputs.put(State.Fit_Prediction_B, new Input[] {});
         validStateInputs.put(State.Fit_Profile_Cleared, new Input[] {});
-        validStateInputs.put(State.Fit_Profile, new Input[] {});
+        validStateInputs.put(State.Fit_Profile, new Input[] {Input.add_seed, Input.remove_seed});
         validStateInputs.put(State.How_does_it_work, new Input[] {});
         validStateInputs.put(State.Manual_Seed_Saved, new Input[] {});
         validStateInputs.put(State.Privacy_Policy, new Input[] {});
@@ -150,11 +161,14 @@ public class BusinessLogic {
     /**
      * Processes the input (aka action) to move to the next state and output the values for next screen
      * @param input The input received from the app
+     * @param sessionID The ID of the session
      * @param paramString The additional information
      * @return The GraphQL structure containing the next screen ID and values to populate it
      */
-    public String processInput(Input input, String paramString) {
+    public String processInput(Input input, String sessionID, String paramString) {
         String output = "{}";
+        setOrCreateSessionID(sessionID);
+
         try {
             switch (getState()) {
                 case Init:
@@ -266,7 +280,11 @@ public class BusinessLogic {
     private String getResponseForStateScreen(State state) throws ScreenForStateNotFound, ResponseForStateScreenNotFound {
         int screen = getScreenForState(state);
         if (screenResponse.containsKey(screen)) {
-            return screenResponse.get(screen);
+            return "{\n" +
+                   "    \"sessionID\": \"" + getSessionID() + "\",\n" +
+                   screenResponse.get(screen) +
+                   "}\n";
+
         }
         throw new ResponseForStateScreenNotFound(screen); 
     }
@@ -293,89 +311,159 @@ public class BusinessLogic {
         return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Calculating_Prediction_A(Input input, String paramString) {
-        setState(State.Init);
-        return("Calculating_Prediction_A output");
+    private String execute_Calculating_Prediction_A(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Calculating_Prediction_B(Input input, String paramString) {
-        setState(State.Init);
-        return("Calculating_Prediction_B output");
+    private String execute_Calculating_Prediction_B(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Calculator_A(Input input, String paramString) {
-        setState(State.Init);
-        return("Calculator_A output");
+    private String execute_Calculator_A(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Calculator_B(Input input, String paramString) {
-        setState(State.Init);
-        return("Calculator_B output");
+    private String execute_Calculator_B(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Calculator_C(Input input, String paramString) {
-        setState(State.Init);
-        return("Calculator_C output");
+    private String execute_Calculator_C(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Clearing_Fit_Profile(Input input, String paramString) {
-        setState(State.Init);
-        return("Clearing_Fit_Profile output");
+    private String execute_Clearing_Fit_Profile(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Delete_Seed(Input input, String paramString) {
-        setState(State.Init);
-        return("Delete_Seed output");
+    private String execute_Delete_Seed(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Fit_Prediction_A(Input input, String paramString) {
-        setState(State.Init);
-        return("Fit_Prediction_A output");
+    private String execute_Fit_Prediction_A(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Fit_Prediction_B(Input input, String paramString) {
-        setState(State.Fit_Profile);
-        return("Fit_Prediction_B output");
+    private String execute_Fit_Prediction_B(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Fit_Profile(Input input, String paramString) {
-        setState(State.Init);
-        return("Fit_Profile output");
+    private String execute_Fit_Profile(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        if (input == Input.remove_seed) {
+            nextState = State.Delete_Seed_Confirmation;
+        }
+        else if (input == Input.add_seed) {
+            nextState = State.Calculator_B;
+        }     
+
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Fit_Profile_Cleared(Input input, String paramString) {
-        setState(State.Init);
-        return("Fit_Profile_Cleared output");
+    private String execute_Fit_Profile_Cleared(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_How_does_it_work(Input input, String paramString) {
-        setState(State.Init);
-        return("How_does_it_work output");
+    private String execute_How_does_it_work(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Manual_Seed_Saved(Input input, String paramString) {
-        setState(State.Init);
-        return("Manual_Seed_Saved output");
+    private String execute_Manual_Seed_Saved(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Privacy_Policy(Input input, String paramString) {
-        setState(State.Init);
-        return("Privacy_Policy output");
+    private String execute_Privacy_Policy(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    private String execute_What_is_my_Fit_Profile(Input input, String paramString) {
-        setState(State.Init);
-        return("What_is_my_Fit_Profile output");
+    private String execute_What_is_my_Fit_Profile(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+        assertInputValid(input);
+        State nextState = State.Undefined;
+
+        // FIXME: Add business logic
+        
+        setState(nextState);
+        return getResponseForStateScreen(nextState);
     }
 
-    /**
-     * Main -- For testing purpose
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        BusinessLogic businessLogic = new BusinessLogic();
-        String output = businessLogic.execute_Init(Input.open_fp, "query params");
-        System.out.println(output);
-    }
 }

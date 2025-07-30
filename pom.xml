@@ -17,6 +17,12 @@
     </properties>
 
     <dependencies>
+        <!-- JSON -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.1</version>
+        </dependency>
         <!-- Log4j2 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -60,7 +66,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <mainClass>io.sspinc.api.BusinessLogic</mainClass>
+                    <mainClass>io.sspinc.api.BusinessLogicTest</mainClass>
                 </configuration>
             </plugin>
         </plugins>
