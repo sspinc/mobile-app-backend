@@ -1,6 +1,9 @@
 package io.sspinc.api;
 
+import java.util.Random;
+
 public class FSM {
+
     enum State {
         Init,
         Calculating_Prediction_A,
@@ -21,6 +24,13 @@ public class FSM {
         Undefined
     }
 
+    public static State getRandomState() {
+        State[] states = State.values();
+        int idx = new Random().nextInt(states.length);
+        return states[idx];
+    }
+
+
     enum Input {
         approved,
         add_seed,
@@ -40,5 +50,11 @@ public class FSM {
         size_type_selected,
         what_is_my_fit_profile,
         undefined
-    } 
+    }
+
+    public static Input getRandomInput() {
+        Input[] inputs = Input.values();
+        int idx = new Random().nextInt(inputs.length);
+        return inputs[idx];
+    }
 }

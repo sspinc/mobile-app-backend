@@ -17,7 +17,7 @@ public class BusinessLogicTest {
 
         ScreenResponseData responseObj = ScreenResponseData.deserializeScreenResponse(response);
         String sessionID = responseObj.sessionID;
-
+        
         if (responseObj.data.screenResponse.screenId.equals("screen_5")) {
             if (Math.random() * 100 > 50) {
                 response = businessLogic.processInput(Input.add_seed, sessionID, "null");
@@ -27,5 +27,13 @@ public class BusinessLogicTest {
             }
             System.out.println(response);
         }
+
+        for (int i=0; i < 10000; i++)
+        {
+            Input input = FSM.getRandomInput();
+            response = businessLogic.processInput(input, sessionID, "null");
+            System.out.println(response);
+        }
+
     }
 }

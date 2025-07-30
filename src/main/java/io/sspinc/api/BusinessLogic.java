@@ -11,12 +11,12 @@ public class BusinessLogic {
     /**
      * Stores the current state for each session
      */
-    private HashMap<String, FSM.State> sessionState = new HashMap<>();
+    private HashMap<String, State> sessionState = new HashMap<>();
 
     /**
      * Stores the screen ID associated to each state
      */
-    private HashMap<FSM.State, Integer> stateScreen = new HashMap<>();
+    private HashMap<State, Integer> stateScreen = new HashMap<>();
 
     /**
      * Stores the GraphQL response required to populate to each screen
@@ -42,8 +42,8 @@ public class BusinessLogic {
     /**
      * Set the current state
      */
-    public void setState(FSM.State state) {
-        logger.info("\nSessionID: {}, CurrentState: {}, NextState: {}", sessionID, getState(), state);
+    public void setState(State state, Input input) {
+        logger.info("\nSessionID: {} | {} --> {} --> {}", sessionID, getState(), input, state);
         sessionState.put(sessionID, state);
     }
 
@@ -193,7 +193,7 @@ public class BusinessLogic {
                     output = execute_Clearing_Fit_Profile(input, paramString);
                     break;
                 case Delete_Seed_Confirmation:
-                    output = execute_Delete_Seed(input, paramString);
+                    output = execute_Delete_Seed_Confirmation(input, paramString);
                     break;
                 case Fit_Prediction_A:
                     output = execute_Fit_Prediction_A(input, paramString);
@@ -307,7 +307,7 @@ public class BusinessLogic {
             nextState = State.Calculator_A;
         }
 
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -319,7 +319,7 @@ public class BusinessLogic {
             nextState = State.Fit_Prediction_A;
         }
 
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -331,7 +331,7 @@ public class BusinessLogic {
             nextState = State.Fit_Prediction_B;
         }
 
-        setState(State.Fit_Prediction_B);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -343,7 +343,7 @@ public class BusinessLogic {
             nextState = State.Calculating_Prediction_A;
         }
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -358,7 +358,7 @@ public class BusinessLogic {
             nextState = State.Calculating_Prediction_A;
         }     
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -366,9 +366,11 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (Input.size_selected == input) {
+            nextState = State.Calculating_Prediction_A;
+        }
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -376,19 +378,31 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (Input.ready == input) {
+            nextState = State.Fit_Profile_Cleared;
+        }
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
-    private String execute_Delete_Seed(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
+    private String execute_Delete_Seed_Confirmation(Input input, String paramString) throws InputNotSupportedException, ScreenForStateNotFound, ResponseForStateScreenNotFound {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (Input.approved == input) {
+            if (userHasSeeds(paramString)) {
+                nextState = State.Calculating_Prediction_B;
+            }
+            else {
+                nextState = State.Clearing_Fit_Profile;
+            }
+        }
+        else if (Input.declined == input) {
+            nextState = State.Fit_Profile;
+        }
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -396,9 +410,11 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (input == Input.next) {
+            nextState = State.Manual_Seed_Saved;
+        }
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -406,9 +422,11 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (input == Input.done) {
+            nextState = State.Fit_Profile;
+        }
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -423,7 +441,7 @@ public class BusinessLogic {
             nextState = State.Calculator_B;
         }     
 
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -431,9 +449,11 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (input == Input.done) {
+            nextState = State.Calculator_C;
+        }
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -443,7 +463,7 @@ public class BusinessLogic {
 
         // FIXME: Add business logic
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -451,9 +471,11 @@ public class BusinessLogic {
         assertInputValid(input);
         State nextState = State.Undefined;
 
-        // FIXME: Add business logic
+        if (input == Input.done) {
+            nextState = State.Fit_Profile;
+        }
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -463,7 +485,7 @@ public class BusinessLogic {
 
         // FIXME: Add business logic
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
@@ -473,7 +495,7 @@ public class BusinessLogic {
 
         // FIXME: Add business logic
         
-        setState(nextState);
+        setState(nextState, input);
         return getResponseForStateScreen(nextState);
     }
 
